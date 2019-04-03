@@ -7,7 +7,7 @@
   
   Each constructor function has unique properties and methods that are defined in their block comments below:
 */
-
+console.log("Prototypes Starts Here")
 /*
   === GameObject ===
   * createdAt
@@ -15,14 +15,14 @@
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
-function GameObject(attrs) {
-  this.createdAt = attrs.createdAt;
-  this.name = attrs.name;
-  this.dimensions = attrs.dimensions;
-  this.destroy = destroy(); {
-    return `${this.name} was removed from the game.`
-  }
+function GameObject(gameAttrs) {
+  this.createdAt = gameAttrs.createdAt;
+  this.name = gameAttrs.name;
+  this.dimensions = gameAttrs.dimensions;
 }
+GameObject.prototype.destroy = function () {
+  return `${this.name} was removed from the game.`;
+};
 
 /*
   === CharacterStats ===
@@ -30,9 +30,16 @@ function GameObject(attrs) {
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
-function CharacterStats() {
-  this.takeDamage(); { return '<object name> took damage.' };
+function CharacterStats(charAttrs) {
+  GameObject.call(this, charAttrs); // bind parent to the child.
+  this.healthPoints = charAttrs.healthPoints;
+  this.name = charAttrs.name;
 }
+CharacterStats.prototype = Object.create(GameObject.prototype); //link the child prototype to the parent 
+CharacterStats.prototype.takeDamage = function () { //Add prototype method
+  return `${this.name} took damage.`;
+}
+
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
   * team
@@ -42,6 +49,23 @@ function CharacterStats() {
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
+
+//Create Constructor Function
+function Humanoid(humanoidAttrs) {
+  CharacterStats.call(this, humanoidAttrs); // Bind grandchild to Child
+  this.team = humanoidAttrs.team;
+  this.weapons = humanoidAttrs.weapons;
+  this.language = humanoidAttrs.language;
+}
+//Bind grandchild to Child
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+//Linking child prototype building block to parent building block
+Humanoid.prototype.greet = function () {
+  console.log(`${this.name} offers a greeting in ${this.language}.`);
+}
+
+
 
 /*
  * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -118,3 +142,8 @@ console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
 // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
 // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
 // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+
+function Villain() {
+
+}
